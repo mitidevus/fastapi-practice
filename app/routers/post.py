@@ -1,16 +1,17 @@
 from fastapi import APIRouter, Depends
 from starlette import status
 from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from database import get_db_context
+from database import get_db_context, get_async_db_context
 from schemas import Post, CreatePost, UpdatePost
 from services import post as PostService
 
 router = APIRouter(prefix="/posts", tags=["Posts"])
 
 @router.get("/", response_model=list[Post])
-def get_all_posts(db: Session = Depends(get_db_context)):
-    return PostService.get_all_posts(db)
+async def get_all_posts(async_db: AsyncSession = Depends(get_async_db_context)):
+    return await PostService.get_all_posts(async_db)
 
 @router.get("/{id}", response_model=Post)
 def get_post(id: int, db: Session = Depends(get_db_context)):

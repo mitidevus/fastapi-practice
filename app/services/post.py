@@ -1,12 +1,16 @@
 from fastapi import HTTPException, status
+from sqlalchemy import select
 from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from services import utils
 from models import Post as PostModel
 from schemas import Post, CreatePost, UpdatePost
 
-def get_all_posts(db: Session) -> list[Post]:
-    return db.query(Post).all()
+async def get_all_posts(async_db: AsyncSession) -> list[Post]:
+    result = await async_db.scalars(select(PostModel).order_by(PostModel.created_at))
+    
+    return result.all()
 
 def get_post(id: int, db: Session) -> Post:
     post = db.query(PostModel).filter(PostModel.id == id).first()
