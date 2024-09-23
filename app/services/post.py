@@ -1,6 +1,7 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
+from services import utils
 from models import Post as PostModel
 from schemas import Post, CreatePost, UpdatePost
 
@@ -16,9 +17,11 @@ def get_post(id: int, db: Session) -> Post:
     return post
 
 def create_post(post: CreatePost, db: Session) -> Post:
-    print("[Service] Creating post...")
-    print(post)
-    new_post = PostModel(**post.dict()) # ** means unpacking the dictionary, same as spreading in JavaScript
+    new_post = PostModel(**post.model_dump()) # ** means unpacking the dictionary, same as spreading in JavaScript
+    
+    new_post.created_at = utils.get_current_utc_time()
+    new_post.updated_at = utils.get_current_utc_time()
+    
     db.add(new_post)
     db.commit()
     db.refresh(new_post)

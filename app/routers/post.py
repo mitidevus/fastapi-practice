@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends
+from starlette import status
 from sqlalchemy.orm import Session
 
 from database import get_db_context
@@ -16,9 +17,7 @@ def get_post(id: int, db: Session = Depends(get_db_context)):
     return PostService.get_post(id, db)
     
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=Post)
-def create_post(post: CreatePost, db: Session = Depends(get_db_context)):
-    print("[Router] Creating post...")
-    print(post)
+async def create_post(post: CreatePost, db: Session = Depends(get_db_context)):
     return PostService.create_post(post, db)
 
 @router.put("/{id}", response_model=Post)
