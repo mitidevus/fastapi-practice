@@ -1,5 +1,4 @@
-from fastapi import APIRouter, Depends
-from starlette import status
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 from sqlalchemy.ext.asyncio import AsyncSession
 

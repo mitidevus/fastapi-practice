@@ -18,5 +18,5 @@ SQLALCHEMY_DATABASE_URL = get_connection_string()
 SQLALCHEMY_DATABASE_URL_ASYNC = get_connection_string(asyncMode=True)
 
 # # JWT Setting
-# JWT_SECRET = os.environ.get("JWT_SECRET")
-# JWT_ALGORITHM = os.environ.get("JWT_ALGORITHM")
+JWT_SECRET = os.environ.get("JWT_SECRET")
+JWT_ALGORITHM = os.environ.get("JWT_ALGORITHM")
