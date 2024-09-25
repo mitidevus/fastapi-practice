@@ -23,3 +23,10 @@ class Post(PostBase):
     
     class Config:
         orm_mode = True
+        
+class PostOut(BaseModel):
+    Post: Post
+    votes: int
+    
+    class Config:
+        orm_mode = True

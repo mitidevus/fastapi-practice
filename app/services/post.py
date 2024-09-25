@@ -1,26 +1,24 @@
 from fastapi import HTTPException, status
-from sqlalchemy import select, and_
-from sqlalchemy.orm import Session, joinedload
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import func
+from sqlalchemy.orm import Session
 
 from services import utils
-from models import Post as PostModel
-from schemas import Post, CreatePost, UpdatePost
+from models import Post as PostModel, Vote as VoteModel
+from schemas import Post, CreatePost, UpdatePost, PostOut
 
-async def get_all_posts(async_db: AsyncSession, user_id: str, limit: int, offset: int, search: str) -> list[Post]:
-    posts = await async_db.execute(select(PostModel).filter(and_(PostModel.owner_id == user_id, PostModel.title.contains(search)))
-                                   .order_by(PostModel.created_at.desc()).limit(limit).offset(offset).options(joinedload(PostModel.owner)))
-     
-    return posts.scalars().all()
+def get_all_posts(db: Session, limit: int, offset: int, search: str) -> list[PostOut]:
+    posts = db.query(PostModel, func.count(VoteModel.post_id).label("votes")).join(
+        VoteModel, VoteModel.post_id == PostModel.id, isouter=True).group_by(PostModel.id).filter(PostModel.title.contains(search)).limit(limit).offset(offset).all()
+    
+    return posts
+    
 
-def get_post(id: int, db: Session, user_id: str) -> Post:
-    post = db.query(PostModel).filter(PostModel.id == id).first()
+def get_post(id: int, db: Session) -> PostOut:
+    post = db.query(PostModel, func.count(VoteModel.post_id).label("votes")).join(
+        VoteModel, VoteModel.post_id == PostModel.id, isouter=True).group_by(PostModel.id).filter(PostModel.id == id).first()
     
     if not post:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Post with id {id} was not found")
-    
-    if post.owner_id != user_id:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to perform requested action")
     
     return post
 
