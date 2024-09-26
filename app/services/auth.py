@@ -26,10 +26,10 @@ def login (email: str, password: str, db: Session):
     user = db.query(UserModel).filter(UserModel.email == email).first()
     
     if not user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Invalid email or password")
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"Invalid email or password")
     
     if not utils.verify_password(password, user.password):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Invalid email or password")
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"Invalid email or password")
     
     return {"access_token": create_access_token(user, timedelta(minutes=10)), "token_type": "bearer"}
 
