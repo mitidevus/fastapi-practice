@@ -30,7 +30,7 @@ def test_login_user(test_user, client):
     })
     login_res = schemas.Token(**res.json())
     payload = jwt.decode(login_res.access_token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
-    id = int(payload.get("sub"))
+    id = int(payload.get("user_id"))
     
     assert id == test_user['id']
     assert login_res.token_type == "bearer"

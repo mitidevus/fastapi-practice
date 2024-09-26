@@ -1,9 +1,10 @@
 from fastapi import HTTPException, status, Depends
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
-from typing import Optional
+from typing import Optional, Union
 from datetime import timedelta
 from jose import jwt, JWTError
+
 
 from . import utils
 from ..models import User as UserModel
@@ -13,14 +14,12 @@ from ..database import get_db_context
 
 oauth2_bearer = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
-def create_access_token(user: UserModel, expires: Optional[timedelta] = None):
-    claims = {
-        "sub": str(user.id),
-        "email": user.email,
-    }
+def create_access_token(data: dict, expires: Optional[timedelta] = None):
+    to_encode = data.copy()
+    
     expire = utils.get_current_utc_time() + expires if expires else utils.get_current_utc_time() + timedelta(minutes=10)
-    claims.update({"exp": expire})
-    return jwt.encode(claims, JWT_SECRET, algorithm=JWT_ALGORITHM)
+    to_encode.update({"exp": expire})
+    return jwt.encode(to_encode, JWT_SECRET, algorithm=JWT_ALGORITHM)
  
 def login (email: str, password: str, db: Session):
     user = db.query(UserModel).filter(UserModel.email == email).first()
@@ -31,12 +30,12 @@ def login (email: str, password: str, db: Session):
     if not utils.verify_password(password, user.password):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"Invalid email or password")
     
-    return {"access_token": create_access_token(user, timedelta(minutes=10)), "token_type": "bearer"}
+    return {"access_token": create_access_token({"user_id": user.id}, timedelta(minutes=10)), "token_type": "bearer"}
 
 def verify_access_token(token: str, credentials_exception):
     try:
         payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
-        id: str = payload.get("sub")
+        id: str = payload.get("user_id")
 
         if id is None:
             raise credentials_exception

@@ -49,7 +49,7 @@ def update_post(id: int, updated_post: UpdatePost, db: Session, user_id: str) ->
     
     db.commit()
     
-    return post.first()
+    return post
 
 def delete_post(id: int, db: Session, user_id: str) -> None:
     post_query = db.query(PostModel).filter(PostModel.id == id)

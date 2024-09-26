@@ -11,11 +11,12 @@ router = APIRouter(prefix="/posts", tags=["Posts"])
 
 @router.get("/", response_model=list[PostOut])
 def get_all_posts(db: Session = Depends(get_db_context),
+                  current_user: UserModel = Depends(AuthService.get_current_user),
                     limit: int = 10, offset: int = 0, search: Optional[str] = ""):
     return PostService.get_all_posts(db, limit, offset, search)
 
 @router.get("/{id}", response_model=PostOut)
-def get_post(id: int, db: Session = Depends(get_db_context)):
+def get_post(id: int, db: Session = Depends(get_db_context), current_user: UserModel = Depends(AuthService.get_current_user)):
     return PostService.get_post(id, db)
     
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=Post)
