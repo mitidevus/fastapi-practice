@@ -1,9 +1,9 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
-from services import utils
-from models import User as UserModel
-from schemas import User, CreateUser
+from . import utils
+from ..models import User as UserModel
+from ..schemas import User, CreateUser
 
 def create_user(user: CreateUser, db: Session) -> User:
     new_user = UserModel(**user.model_dump()) # ** means unpacking the dictionary, same as spreading in JavaScript

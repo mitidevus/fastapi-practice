@@ -1,6 +1,7 @@
 from sqlalchemy import Boolean, Column, String, Integer, ForeignKey
 from sqlalchemy.orm import relationship
-from database import Base
+
+from ..database import Base
 from .base_entity import BaseEntity
 
 class Post(BaseEntity, Base):

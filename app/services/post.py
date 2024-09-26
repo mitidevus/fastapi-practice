@@ -2,9 +2,9 @@ from fastapi import HTTPException, status
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
-from services import utils
-from models import Post as PostModel, Vote as VoteModel
-from schemas import Post, CreatePost, UpdatePost, PostOut
+from . import utils
+from ..models import Post as PostModel, Vote as VoteModel
+from ..schemas import Post, CreatePost, UpdatePost, PostOut
 
 def get_all_posts(db: Session, limit: int, offset: int, search: str) -> list[PostOut]:
     posts = db.query(PostModel, func.count(VoteModel.post_id).label("votes")).join(

@@ -1,3 +1,3 @@
-from models.post import *
-from models.user import *
-from models.votes import *
+from .post import *
+from .user import *
+from .votes import *

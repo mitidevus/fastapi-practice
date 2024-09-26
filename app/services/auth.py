@@ -5,11 +5,11 @@ from typing import Optional
 from datetime import timedelta
 from jose import jwt, JWTError
 
-from services import utils
-from models import User as UserModel
-from schemas import TokenData
-from settings import JWT_SECRET, JWT_ALGORITHM
-from database import get_db_context
+from . import utils
+from ..models import User as UserModel
+from ..schemas import TokenData
+from ..settings import JWT_SECRET, JWT_ALGORITHM
+from ..database import get_db_context
 
 oauth2_bearer = OAuth2PasswordBearer(tokenUrl="/auth/login")
 

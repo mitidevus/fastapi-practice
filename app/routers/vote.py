@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
-from database import get_db_context
-from schemas import VotePayload
-from models import User as UserModel
-from services import vote as VoteService, auth as AuthService
+from ..database import get_db_context
+from ..schemas import VotePayload
+from ..models import User as UserModel
+from ..services import vote as VoteService, auth as AuthService
 
 
 router = APIRouter(prefix="/votes", tags=["Votes"])

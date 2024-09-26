@@ -1,8 +1,8 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
-from schemas import VotePayload
-from models import Vote as VoteModel, Post as PostModel
+from ..schemas import VotePayload
+from ..models import Vote as VoteModel, Post as PostModel
 
 def create_vote(vote_payload: VotePayload, db: Session, user_id: str):
     post = db.query(PostModel).filter(PostModel.id == vote_payload.post_id).first()
