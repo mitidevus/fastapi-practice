@@ -108,3 +108,16 @@ def test_posts(test_user, test_user2, session):
     
     posts = session.query(models.Post).all()
     return posts
+
+@pytest.fixture
+def test_vote(test_posts, session, test_user):
+    vote_data = {
+        "post_id": test_posts[3].id,
+        "user_id": test_user['id']
+    }
+    
+    new_vote = models.Vote(**vote_data)
+    session.add(new_vote)
+    session.commit()
+    
+    return new_vote
